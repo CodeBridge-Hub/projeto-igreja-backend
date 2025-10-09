@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # SERVIÇO 1: BACKEND EXPRESS (SEU CÓDIGO)
+  backend:
+    container_name: sistema-atendimento-backend
+    build: . # Usa o Dockerfile no diretório atual para construir o backend Node.js
+    ports:
+      - "3000:3000" # Mapeia a porta de acesso da sua máquina (http://localhost:3000)
+    environment:
+      # Passa as variáveis do arquivo .env para o ambiente Node.js
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      # Monta o diretório local no container para que as mudanças de código sejam instantâneas
+      - .:/usr/src/app
+      - /usr/src/app/node_modules # Impede que o Node_modules local interfira
+    depends_on:
+      - postgres_db # Garante que o banco suba antes da aplicação
+
+  # SERVIÇO 2: BANCO DE DADOS POSTGRESQL
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:15-alpine # Imagem leve e estável do PostgreSQL
+    ports:
+      - "5432:5432" # Porta padrão do Postgres
+    environment:
+      # Credenciais usadas pelo contêiner Postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      # Persiste os dados do banco para que não sejam perdidos ao parar o container
+      - postgres_data:/var/lib/postgresql/data
+
+  # SERVIÇO 3: PGADMIN (Interface Gráfica para o PostgreSQL)
+  pgadmin:
+    container_name: pgadmin_server
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80" # Acessível em http://localhost:5050
+    environment:
+      # Credenciais para acessar a interface do pgAdmin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres_db # Depende que o banco esteja online
+
+# Volumes de Persistência
+volumes:
+  postgres_data:

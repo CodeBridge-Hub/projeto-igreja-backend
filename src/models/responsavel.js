@@ -21,7 +21,7 @@ const Responsavel = sequelize.define('responsavel', {
         
     },
     parentesco:{
-        type: DataTypes.ENUM('pai', 'mãe', 'irmao', 'irma', 'avo', 'tio', 'tia', 'outro' ),
+        type: DataTypes.ENUM('pai', 'mae', 'irmao', 'irma', 'avo', 'tio', 'tia', 'outro' ),
         allowNull: false,
         validate: {
       isIn: {
