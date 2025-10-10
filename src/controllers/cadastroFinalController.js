@@ -12,12 +12,6 @@ const finalizarCadastroComSenha = async (req, res) => {
         return res.status(400).json({ erro: 'ID do paciente e senha são obrigatórios.' });
     }
 
-    // NOVO: Regra de segurança de senha complexa por RegExp
-    // Requisitos:
-    // (?=.*[a-z]): Mínimo 1 letra minúscula
-    // (?=.*[A-Z]): Mínimo 1 letra maiúscula
-    // (?=.*[0-9]): Mínimo 1 número
-    // .{8,}: Mínimo 8 caracteres
     const complexidadeRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
 
     if (!complexidadeRegex.test(senha)) {
