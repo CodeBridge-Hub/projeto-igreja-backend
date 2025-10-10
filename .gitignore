@@ -1,0 +1,48 @@
+# ==========================
+# Node
+# ==========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+.yarn-integrity
+
+# ==========================
+# Build
+# ==========================
+dist/
+build/
+coverage/
+.tmp/
+.cache/
+
+# ==========================
+# Environment
+# ==========================
+.env
+.env.local
+.env.*.local
+
+# ==========================
+# IDEs e editores
+# ==========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.log
+
+# ==========================
+# Sistema Operacional
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Testes
+# ==========================
+jest-cache/
+jest-test-results.json
+coverage/
