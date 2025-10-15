@@ -1,29 +1,57 @@
-const express = require('express');
-const router = express.Router();
-const Atendimento = require('../models/atendimento');
+import express from 'express';
+import Atendimento from '../models/atendimento.js';
 
+const router = express.Router();
+
+//post
 router.post('/', async(req, res)=>{
-    const atendimento = await Atendimento.create(req.body);
-    res.json({message: 'Atendimento feito', atendimento})
+    try {
+        const atendimento = await Atendimento.create(req.body);
+        res.status(201).json({ message: 'Atendimento criado com sucesso', atendimento });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 
 });
 
 //get
 router.get('/', async(req, res)=>{
-    const atendimentos = await Atendimento.findAll();
-    res.json(atendimentos)
+    try {
+        const atendimentos = await Atendimento.findAll();
+        res.json(atendimentos);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 })
 
 //update
-router.put('/', async(req, res)=>{
-    const atendimento = await Atendimento.findByPk(req.params.id)
-    await atendimento.update(req.body)
+router.put('/:id', async(req, res)=>{
+    try {
+        const atendimento = await Atendimento.findByPk(req.params.id);
+        if (atendimento) {
+            await atendimento.update(req.body);
+            res.json({ message: 'Atendimento atualizado com sucesso', atendimento });
+        } else {
+            res.status(404).json({ message: 'Atendimento não encontrado' });
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 })
 
 //delete
 router.delete('/:id', async(req, res)=>{
-    const atendimento = await findByPk(req.params.id);
-    await atendimento.destroy()
+    try {
+        const atendimento = await Atendimento.findByPk(req.params.id);
+        if (atendimento) {
+            await atendimento.destroy();
+            res.status(200).json({ message: 'Atendimento deletado com sucesso' });
+        } else {
+            res.status(404).json({ message: 'Atendimento não encontrado' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-module.exports = router;
+export default router;

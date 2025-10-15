@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Oftalmologia = sequelize.define('Oftalmologia', {
   id_oftalmologia: {
     type: DataTypes.INTEGER,
@@ -64,4 +64,6 @@ const Oftalmologia = sequelize.define('Oftalmologia', {
   ]
 });
 
-module.exports = Oftalmologia;
+return Oftalmologia;
+
+}

@@ -1,38 +1,46 @@
-const express = require('express');
+import express from 'express';
+
+// Importando apenas as funções necessárias de cada controller
+import { 
+    criarCadastro, 
+    atualizarEndereco, 
+    atualizarOcupacao 
+} from '../controllers/pacientesController.js';
+
+import { 
+    finalizarCadastroComSenha 
+} from '../controllers/cadastroFinalController.js';
+
+// Importando as regras de validação
+import { 
+    CadastroValidacao,
+    EnderecoValidacao,
+    OcupacaoValidacao
+} from '../middleware/pacienteValidation.js';
+
 const router = express.Router();
 
-const pacientesController = require('../controllers/pacientesController');
-//Importa o array de regras
-const { CadastroValidacao,
-        EnderecoValidacao,
-        OcupacaoValidacao
-} = require('../middleware/pacienteValidation');
-
-// Aplica o middleware de validação ANTES de chamar o Controller
 // 1. ROTA DE CRIAÇÃO (TELA 1: Dados Pessoais)
-// Usa a validação FLEXÍVEL
 router.post('/',
-    CadastroValidacao, // Executa todas as regras de validação
-    pacientesController.criarCadastro
+    CadastroValidacao,
+    criarCadastro // Usa a função importada diretamente
 );
 
 // 2. ROTA DE ATUALIZAÇÃO DE ENDEREÇO (TELA 2)
-// Usa a validação ESTRITA de Endereço
 router.patch('/:id/endereco', 
     EnderecoValidacao, 
-    pacientesController.atualizarEndereco
+    atualizarEndereco // Usa a função importada diretamente
 );
 
 // 3. ROTA DE ATUALIZAÇÃO DE OCUPAÇÃO (TELA 3)
-// Usa a validação ESTRITA de Ocupação
 router.patch('/:id/ocupacao', 
     OcupacaoValidacao, 
-    pacientesController.atualizarOcupacao
+    atualizarOcupacao // Usa a função importada diretamente
 );
 
-// 4. Rota de Finalização/Criação de Senha (Criação de Senha - TELA 4)
-// Usamos PATCH pois estamos atualizando o registro do paciente com a senha.
-const cadastroFinalController = require('../controllers/cadastroFinalController');
-router.patch('/finalizar-cadastro', cadastroFinalController.finalizarCadastroComSenha)
+// 4. Rota de Finalização/Criação de Senha (TELA 4)
+router.patch('/finalizar-cadastro', 
+    finalizarCadastroComSenha // Usa a função importada diretamente
+);
 
-module.exports = router;
+export default router;

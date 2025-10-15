@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
+import { DataTypes } from 'sequelize';
 
-module.exports = (sequelize) => {
+export default (sequelize) => {
     //Model Nutrição
     const Nutricao = sequelize.define('Nutricao', {
         // --- COLUNAS ---
@@ -40,6 +40,12 @@ module.exports = (sequelize) => {
         // --- OPÇÕES DO MODEL ---
         tableName: 'nutricao',
         timestamps: false,
+        indexes: [
+        {
+            name: 'fk_nutricao_paciente_idx',
+            fields: ['id_paciente']
+        }
+    ]
     });
 
     return Nutricao;

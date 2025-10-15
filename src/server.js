@@ -1,19 +1,17 @@
-require('dotenv').config();
-const express = require('express');
+import 'dotenv/config';
+import express from 'express';
 
 
-const{sequelize, connectDb} = require('../config/database');
-const responsavelRouters = require('../routes/responsavelRoutes');
-const atendimentoRouters = require('../routes/atendimentoRoutes')
+import { connectToDatabase } from './config/database.js';
+import responsavelRouters from './routes/responsavelRoutes.js';
+import atendimentoRouters from'./routes/atendimentoRoutes.js';
 
 
 const app = express()
 //middlewares só usar quando as rotas forem definidas
 app.use(express.json());
 app.use('/api/responsavel', responsavelRouters);
-app.use('/api/atendimento',atendimentoRouters);
-
-
+app.use('/api/atendimento', atendimentoRouters);
 
 
 const PORT = process.env.PORT || 3000
@@ -21,12 +19,10 @@ const PORT = process.env.PORT || 3000
 const startServer = async()=>
 {
     try {
-        await connectDb();
-
-        await sequelize.sync({alter: true});
+        await connectToDatabase();
 
         app.listen(PORT, ()=>{
-    console.log(`rodando na porta ${PORT}`)
+            console.log(`rodando na porta ${PORT}`)
 });
         
     } catch (error) {

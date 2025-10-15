@@ -1,6 +1,6 @@
-const { sequelize, PessoaModel, EnderecoModel, ResponsavelModel } = require('../config/database'); 
+import { sequelize, PessoaModel, EnderecoModel, ResponsavelModel } from '../config/database.js'; 
 
-const processarESalvarCadastro = async (dadosCadastro) => {
+export const processarESalvarCadastro = async (dadosCadastro) => {
     
     // Mapeamento e Preparação de Dados
     
@@ -73,8 +73,4 @@ const processarESalvarCadastro = async (dadosCadastro) => {
         
         throw new Error('Falha na criação do cadastro: ' + error.message);
     }
-};
-
-module.exports = {
-    processarESalvarCadastro
 };

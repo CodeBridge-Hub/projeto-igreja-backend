@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database'); // ajuste o caminho conforme seu projeto
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Atendimento = sequelize.define('Atendimento', {
   id_atendimento: {
     type: DataTypes.INTEGER,
@@ -41,8 +41,9 @@ const Atendimento = sequelize.define('Atendimento', {
   ]
 });
 
-module.exports = Atendimento;
+return  Atendimento;
 
+};
 
 //const Paciente = require('./Paciente'); // do modelo Paciente
 

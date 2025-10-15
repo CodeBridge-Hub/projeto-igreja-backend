@@ -1,7 +1,31 @@
-require('dotenv').config();
-const { Sequelize } = require('sequelize');
-const mysql = require('mysql2/promise');
+import 'dotenv/config';
+import { Sequelize } from 'sequelize';
+import pg from 'pg';
+const { Client } = pg;
 
+
+// --- 1. Modelos Independentes (Pais) ---
+// Não dependem de nenhum outro modelo para serem criados.
+import EnderecoModelFunc from '../models/Endereco.js'; 
+import ResponsavelModelFunc from '../models/responsavel.js';
+import UsuarioModelFunc from '../models/usuario.js'; 
+
+// --- 2. Modelos Primários (Filhos diretos) ---
+// Dependem diretamente dos modelos acima.
+import PessoaModelFunc from '../models/pessoa.js'; 
+import LogAuditoriaModelFunc from '../models/LogAuditoria.js'; 
+
+// --- 3. Modelos de Atendimento e Especialidades ---
+// Todos dependem do modelo 'Pessoa'.
+import AtendimentoModelFunc from '../models/atendimento.js'; 
+import EncaminhamentoModelFunc from '../models/Encaminhamento.js';
+import AcomodacaoModelFunc from '../models/AcomodacaoSensorial.js';
+import JuridicoModelFunc from '../models/Juridico.js';
+import MedicoGeralModelFunc from '../models/MedicoGeral.js';
+import NutricaoModelFunc from '../models/Nutricao.js';
+import OdontologiaModelFunc from '../models/Odontologia.js';
+import PediatriaModelFunc from '../models/Pediatria.js';
+import PsicologiaModelFunc from '../models/Psicologia.js';
 
 // Instância do Sequelize
 const sequelize = new Sequelize(
@@ -10,33 +34,36 @@ const sequelize = new Sequelize(
    process.env.DB_PASS,
    {
       host: process.env.DB_HOST,
-      dialect: 'mysql',
+      port: process.env.DB_PORT,
+      dialect: process.env.DB_DIALECT,
       logging: false
    }
 );
 
-// --- 1. IMPORTAÇÃO E INICIALIZAÇÃO DOS MODELOS ---
+// --- INICIALIZAÇÃO DOS MODELOS ---
 
-// Modelos Base e Segurança
-const PessoaModel = require('../models/pessoa')(sequelize); 
-const EnderecoModel = require('../models/Endereco')(sequelize); 
-const ResponsavelModel = require('../models/responsavel')(sequelize);
-const UsuarioModel = require('../models/usuario')(sequelize); 
-const LogAuditoriaModel = require('../models/LogAuditoria')(sequelize); 
-const AtendimentoModel = require('../models/atendimento')(sequelize); 
-const EncaminhamentoModel = require('../models/Encaminhamento')(sequelize);
+// Carregando cada modelo chamando a função de exportação e passando a instância do Sequelize.
+// 1. Inicializa os modelos "Pais"
+const EnderecoModel = EnderecoModelFunc(sequelize); 
+const ResponsavelModel = ResponsavelModelFunc(sequelize);
+const UsuarioModel = UsuarioModelFunc(sequelize); 
 
-// Modelos de Especialidade
-const AcomodacaoModel = require('../models/AcomodacaoSensorial')(sequelize);
-const JuridicoModel = require('../models/Juridico')(sequelize);
-const MedicoGeralModel = require('../models/MedicoGeral')(sequelize);
-const NutricaoModel = require('../models/Nutricao')(sequelize);
-const OdontologiaModel = require('../models/Odontologia')(sequelize);
-const PediatriaModel = require('../models/Pediatria')(sequelize);
-const PsicologiaModel = require('../models/Psicologia')(sequelize);
+// 2. Inicializa os modelos "Filhos" que dependem dos pais
+const PessoaModel = PessoaModelFunc(sequelize); 
+const LogAuditoriaModel = LogAuditoriaModelFunc(sequelize); 
 
+// 3. Inicializa os modelos de atendimento que dependem de 'Pessoa'
+const AtendimentoModel = AtendimentoModelFunc(sequelize); 
+const EncaminhamentoModel = EncaminhamentoModelFunc(sequelize);
+const AcomodacaoModel = AcomodacaoModelFunc(sequelize);
+const JuridicoModel = JuridicoModelFunc(sequelize);
+const MedicoGeralModel = MedicoGeralModelFunc(sequelize);
+const NutricaoModel = NutricaoModelFunc(sequelize);
+const OdontologiaModel = OdontologiaModelFunc(sequelize);
+const PediatriaModel = PediatriaModelFunc(sequelize);
+const PsicologiaModel = PsicologiaModelFunc(sequelize);
 
-// --- 2. DEFINIÇÃO DE ASSOCIAÇÕES (Relacionamentos) ---
+// --- DEFINIÇÃO DE ASSOCIAÇÕES (Relacionamentos) ---
 // NOTA: Os IDs 'id_paciente' e 'id_pessoa' referenciam PessoaModel
 const TARGET_KEY = 'id_pessoa'; 
 
@@ -76,16 +103,25 @@ const connectToDatabase = async () => {
       console.log("1. Lendo variáveis de ambiente...");
       
       // A) Conexão Temporária para Criar o Banco (usando mysql2)
-      const connection  = await mysql.createConnection({
-          host: process.env.DB_HOST,
-          user: process.env.DB_USER,
-          password: process.env.DB_PASS
-      });
+      const client = new Client({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASS,
+            database: 'postgres' // Conecta ao banco 'postgres' padrão para poder criar o seu
+      });
 
-      console.log("2. Conexão com o servidor MySQL estabelecida.");
-      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
-      await connection.end();
-      console.log(`3. Banco de dados '${process.env.DB_NAME}' criado ou verificado.`);
+      await client.connect();
+      console.log("2. Conexão com o servidor PostgreSQL estabelecida.");
+
+      const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = '${process.env.DB_NAME}'`);
+      if (res.rowCount === 0) {
+            await client.query(`CREATE DATABASE "${process.env.DB_NAME}"`);
+            console.log(`3. Banco de dados '${process.env.DB_NAME}' criado.`);
+      } else {
+            console.log(`3. Banco de dados '${process.env.DB_NAME}' verificado.`);
+      }
+      await client.end();
 
       // B) Autenticação do Sequelize e Sincronização
       await sequelize.authenticate();
@@ -103,11 +139,11 @@ const connectToDatabase = async () => {
 }
 
 // --- 4. Exportação dos Componentes ---
-module.exports = {
+export {
    sequelize, 
    connectToDatabase, 
    
-    // Exportamos todos os Models para uso nos Services
+   // Exportamos todos os Models para uso nos Services
    PessoaModel, 
    EnderecoModel,
    ResponsavelModel,

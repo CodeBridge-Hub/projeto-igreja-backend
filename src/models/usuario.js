@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Usuario = sequelize.define('Usuario', {
   id_usuario: {
     type: DataTypes.INTEGER,
@@ -31,4 +31,6 @@ const Usuario = sequelize.define('Usuario', {
   engine: 'InnoDB'   
 });
 
-module.exports = Usuario;
+return Usuario;
+
+}
