@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Enfermagem = sequelize.define('Enfermagem', {
     id_enfermagem:{
         type: DataTypes.INTEGER,
@@ -12,7 +12,7 @@ const Enfermagem = sequelize.define('Enfermagem', {
     id_paciente: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-         type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
         model: 'Paciente', // Nome da tabela referenciada
@@ -21,7 +21,7 @@ const Enfermagem = sequelize.define('Enfermagem', {
         onUpdate: 'CASCADE'
     },
 
-     data_hora_atendimento: {
+    data_hora_atendimento: {
     type: DataTypes.DATE,
     allowNull: false
   },
@@ -61,6 +61,18 @@ const Enfermagem = sequelize.define('Enfermagem', {
     type: DataTypes.STRING(100),
     allowNull: true
   }
-})
+}, {
+        // --- OPÇÕES DO MODEL ---
+        tableName: 'enfermagem',
+        timestamps: false,
+        indexes: [
+        {
+            name: 'fk_enfermagem_paciente_idx',
+            fields: ['id_paciente']
+        }
+    ]
+    })
 
-module.exports = Enfermagem
+return Enfermagem
+
+}

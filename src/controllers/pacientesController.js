@@ -1,5 +1,5 @@
-const { validationResult } = require('express-validator'); // Importa a função de erro
-const pacienteService = require('../services/pacienteService');
+import { validationResult } from 'express-validator'; // Importa a função de erro
+import pacienteService from '../services/pacienteService.js';
 
 // Função principal de CRIAÇÃO (TELA 1 - Dados Pessoais)
 const criarCadastro = async (req, res) => {
@@ -81,7 +81,7 @@ const atualizarOcupacao = async (req, res) => {
     }
 };
 
-module.exports = {
+export {
     criarCadastro,
     atualizarEndereco,
     atualizarOcupacao

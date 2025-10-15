@@ -1,13 +1,14 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Pessoa = sequelize.define('pessoa',{
 
     id_pessoa:{
         type: DataTypes.INTEGER,
+        primaryKey: true,
         allowNull: false,
         autoIncrement: true,
-      
+    
     },
 
     nome:{
@@ -48,21 +49,19 @@ const Pessoa = sequelize.define('pessoa',{
 
     id_endereco:{
         type: DataTypes.INTEGER,
-        autoIncrement: true,
         allowNull: false,
         references:{
             model: 'endereco',
             key: 'id_endereco'
         },
-         onDelete: 'SET NULL',
-         onUpdate: 'CASCADE'
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE'
     },
 
     id_responsavel:{
         type: DataTypes.INTEGER,
-        autoIncrement: true,
         allowNull: false,
-          references:{
+        references:{
             model: 'responsavel',
             key: 'id_responsavel'
         },
@@ -75,13 +74,15 @@ const Pessoa = sequelize.define('pessoa',{
     indexes:[
         {
             name: 'fk_pessoa_endereco_idx',
-            fields: [id_endereco]
+            fields: ['id_endereco']
         },
         {
             name: 'fk_pessoa_responsavel_idx',
-            fields: [id_endereco]
+            fields: ['id_endereco']
         }
     ]
 });
 
-module.exports = Pessoa;
+return Pessoa;
+
+};

@@ -1,8 +1,5 @@
-const bcrypt = require('bcryptjs');
-/**
- * Simula a criação do usuário logável do paciente/responsável 
- * após a finalização do cadastro.
- */
+import bcrypt from 'bcryptjs';
+
 const finalizarCadastroComSenha = async (req, res) => {
     // ID do paciente e a senha vêm do frontend.
     const { paciente_id, senha } = req.body;
@@ -51,6 +48,6 @@ const finalizarCadastroComSenha = async (req, res) => {
     }
 };
 
-module.exports = {
+export {
     finalizarCadastroComSenha,
 };

@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // 1. Configurações do transportador (SMTP)
 // Ele usa as variáveis EMAIL_USER, EMAIL_PASS e EMAIL_SERVICE do arquivo .env.
@@ -16,9 +16,9 @@ const transporter = nodemailer.createTransport({
  * @param {string} resetToken - Token de segurança gerado pelo backend.
  * @param {string} userName - Nome do usuário.
  */
-const sendPasswordReset = async (toEmail, resetToken, userName) => {
+
+export const sendPasswordReset = async (toEmail, resetToken, userName) => {
     // 1. Cria o link de recuperação (URL do Front-end + Token)
-    // O FRONTEND_URL vem do seu .env
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     
     // 2. Configuração do corpo do email
@@ -46,8 +46,4 @@ const sendPasswordReset = async (toEmail, resetToken, userName) => {
         console.error('ERRO AO ENVIAR EMAIL (Nodemailer):', error);
         throw new Error('Falha no serviço de envio de email. Verifique as credenciais SMTP.'); 
     }
-};
-
-module.exports = {
-    sendPasswordReset,
 };

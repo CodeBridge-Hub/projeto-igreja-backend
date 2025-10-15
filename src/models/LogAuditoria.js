@@ -1,6 +1,6 @@
-const { DataTypes, STRING } = require('sequelize');
+import { DataTypes } from 'sequelize';
 
-module.exports = (sequelize) => {
+export default (sequelize) => {
     // Model LogAuditoria
     const LogAuditoria = sequelize.define('LogAuditoria', {
         // --- COLUNAS ---
@@ -29,6 +29,12 @@ module.exports = (sequelize) => {
         // --- OPÇÕES DO MODEL ---
         tableName: 'log_auditoria',
         timestamps: false,
+        indexes: [
+        {
+            name: 'fk_log_usuari_idx',
+            fields: ['id_usuario']
+        }
+    ]
     });
 
     return LogAuditoria;

@@ -1,8 +1,8 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Biomedicina = sequelize.define('Biomedicina', {
-     id_biomedicina: {
+    id_biomedicina: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true
@@ -45,4 +45,6 @@ const Biomedicina = sequelize.define('Biomedicina', {
     ]
 })
 
-module.exports = Biomedicina
+    return Biomedicina
+
+};

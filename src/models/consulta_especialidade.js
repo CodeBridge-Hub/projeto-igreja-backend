@@ -1,28 +1,28 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Consulta_especialidade = sequelize.define('Consulta_especialidade', {
-     id_consulta: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-     },
+    id_consulta: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true
+    },
 
-     id_paciente: {
-        types: DataTypes.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        references:{
-            model: 'paciente',
-            key: 'id_paciente'
-        }, 
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-     },
+    id_paciente: {
+      types: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      references:{
+        model: 'paciente',
+        key: 'id_paciente'
+      }, 
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    },
 
 
-     especialidade: {
+    especialidade: {
         type: DataTypes.ENUM(
             'oftalmologia',
             'psicologia',
@@ -34,9 +34,9 @@ const Consulta_especialidade = sequelize.define('Consulta_especialidade', {
         ),
 
         allowNull: false
-     },
+    },
 
-     data_hora_consulta: {
+    data_hora_consulta: {
     type: DataTypes.DATE,
     allowNull: false
   },
@@ -128,4 +128,6 @@ oft_refra_grau: {
     ]
 })  
 
-module.exports = Consulta_especialidade
+return Consulta_especialidade
+
+}

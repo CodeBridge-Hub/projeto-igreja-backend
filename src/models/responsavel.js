@@ -1,7 +1,13 @@
-const {DataTypes} = require('sequelize');
-const {sequelize} = require('../config/database');
+import { DataTypes } from 'sequelize';
 
+export default (sequelize) => {
 const Responsavel = sequelize.define('responsavel', {
+    id_responsavel: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+    },
     nome_responsavel: {
         type: DataTypes.STRING,
         allowNull: false
@@ -24,17 +30,19 @@ const Responsavel = sequelize.define('responsavel', {
         type: DataTypes.ENUM('pai', 'mae', 'irmao', 'irma', 'avo', 'tio', 'tia', 'outro' ),
         allowNull: false,
         validate: {
-      isIn: {
+        isIn: {
         args: [['pai', 'mae', 'irmao', 'irma', 'avo', 'tio', 'tia', 'outro']],
         msg: 'O valor de parentesco deve ser um dos seguintes: pai, mae, irmao, irma, avo, tio, tia ou outro.'
-      }
+    }
     }
     }
 }, {
     tableName: 'responsavel',
-    timestamps: true
+    timestamps: true,
+    engine: 'InnoDB'
 
 });
 
-module.exports = Responsavel
+return Responsavel
 
+}

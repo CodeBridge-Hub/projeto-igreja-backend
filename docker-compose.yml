@@ -19,7 +19,8 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules # Impede que o Node_modules local interfira
     depends_on:
-      - postgres_db # Garante que o banco suba antes da aplicação
+      postgres_db:
+        condition: service_healthy # Garante que o banco suba antes da aplicação
 
   # SERVIÇO 2: BANCO DE DADOS POSTGRESQL
   postgres_db:
@@ -35,6 +36,12 @@ services:
     volumes:
       # Persiste os dados do banco para que não sejam perdidos ao parar o container
       - postgres_data:/var/lib/postgresql/data
+
+    healthcheck: # <-- BLOCO ADICIONADO
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # SERVIÇO 3: PGADMIN (Interface Gráfica para o PostgreSQL)
   pgadmin:

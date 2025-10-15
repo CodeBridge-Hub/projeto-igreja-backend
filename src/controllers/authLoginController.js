@@ -1,4 +1,4 @@
-const authLoginService = require('../services/authLoginService');
+import authLoginService from '../services/authLoginService.js';
 
 // Lógica para Login
 const login = async (req, res) => {
@@ -11,7 +11,7 @@ const login = async (req, res) => {
 
     try {
         // Chama a lógica de autenticação REAL do Service
-        const resultado = await authService.autenticarUsuario(cpf_ou_email, senha);
+        const resultado = await authLoginService.autenticarUsuario(cpf_ou_email, senha);
 
         // Sucesso
         return res.status(200).json({ 
@@ -25,7 +25,7 @@ const login = async (req, res) => {
         if (error.message === 'Usuário não encontrado.' || error.message === 'Senha inválida.') {
             return res.status(401).json({ erro: 'Credenciais inválidas.' }); 
         }
-        console.error('Erro no login (real):', error);
+        console.error('Erro no login:', error);
         return res.status(500).json({ erro: 'Falha interna do servidor.' });
     }
 };
@@ -40,7 +40,7 @@ const recuperarSenha = async (req, res) => {
 
     try {
         // Chama a lógica de recuperação (busca e geração de token)
-        const resultado = await authService.iniciarRecuperacaoDeSenha(cpf_ou_email);
+        const resultado = await authLoginService.iniciarRecuperacaoDeSenha(cpf_ou_email);
         
         // Retorna sucesso (mensagem genérica para segurança)
         return res.status(200).json({ 
@@ -48,12 +48,12 @@ const recuperarSenha = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erro na recuperação de senha (real):', error);
+        console.error('Erro na recuperação de senha:', error);
         return res.status(500).json({ erro: 'Falha interna do servidor.' });
     }
 };
 
-module.exports = {
+export {
     login,
     recuperarSenha,
 };

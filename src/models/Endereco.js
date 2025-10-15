@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize'); //Importa a ferramenta de Tipos de Dados do Sequelize
+import { DataTypes } from 'sequelize'; //Importa a ferramenta de Tipos de Dados do Sequelize
 
 //função que recebe a instância do Sequelize como argumento
-module.exports = (sequelize) => {
+export default (sequelize) => {
     //Model Endereço
     const Endereco = sequelize.define('Endereco', {
         // ---COLUNAS---
@@ -41,7 +41,8 @@ module.exports = (sequelize) => {
     }, {
         // ---OPÇÕES DO MODEL---
         tableName: 'Endereco', // Garante que o Sequelize crie a tabela exatamente como 'Endereco' no seu banco.
-        timestamps: false // Desativa as colunas 'createdAt' e 'updatedAt' automáticas do Sequelize, seguindo seu SQL.
+        timestamps: false,
+        engine: 'InnoDB'
 
     });
 
