@@ -40,7 +40,7 @@ export default (sequelize) => {
         },
     }, {
         // ---OPÇÕES DO MODEL---
-        tableName: 'Endereco', // Garante que o Sequelize crie a tabela exatamente como 'Endereco' no seu banco.
+        tableName: 'endereco', // Garante que o Sequelize crie a tabela exatamente como 'Endereco' no seu banco.
         timestamps: false,
         engine: 'InnoDB'
 

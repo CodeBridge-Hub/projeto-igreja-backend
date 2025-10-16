@@ -20,7 +20,7 @@ const Pessoa = sequelize.define('pessoa',{
         allowNull: false
     },
     cpf:{
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false
     },
     sexo:{
@@ -34,7 +34,7 @@ const Pessoa = sequelize.define('pessoa',{
         defaultValue: false
     },
     telefone_contato:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
 
     },
@@ -66,10 +66,10 @@ const Pessoa = sequelize.define('pessoa',{
             key: 'id_responsavel'
         },
         onDelete: 'SET NULL',
-        key: 'CASCADE'
+        onUpdate: 'CASCADE'
     }
 }, {
-    tableName: 'Pessoa',
+    tableName: 'pessoa',
     timestamps: false,
     indexes:[
         {
