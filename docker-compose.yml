@@ -21,6 +21,8 @@ services:
     depends_on:
       postgres_db:
         condition: service_healthy # Garante que o banco suba antes da aplicação
+    networks:
+      - mynetwork
 
   # SERVIÇO 2: BANCO DE DADOS POSTGRESQL
   postgres_db:
@@ -42,6 +44,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - mynetwork
 
   # SERVIÇO 3: PGADMIN (Interface Gráfica para o PostgreSQL)
   pgadmin:
@@ -53,9 +57,17 @@ services:
       # Credenciais para acessar a interface do pgAdmin
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - ./pgadmin_config/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres_db # Depende que o banco esteja online
+    networks:
+      - mynetwork
 
 # Volumes de Persistência
 volumes:
   postgres_data:
+
+networks:
+  mynetwork:
+    driver: bridge

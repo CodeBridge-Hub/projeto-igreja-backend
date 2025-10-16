@@ -1,5 +1,5 @@
 import express from 'express';
-import Atendimento from '../models/atendimento.js';
+import Atendimento from '../models/Atendimento.js';
 
 const router = express.Router();
 
