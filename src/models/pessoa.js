@@ -3,7 +3,7 @@ import { DataTypes } from 'sequelize';
 export default (sequelize) => {
 const Pessoa = sequelize.define('pessoa',{
 
-    id_pessoa:{
+    id:{
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
@@ -28,31 +28,67 @@ const Pessoa = sequelize.define('pessoa',{
         allowNull: false,
 
     },
+    escolaridade:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    estado_civil:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    email:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    possui_responsavel: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
+    condicao_saude:{
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    condicao_saude_outro:{
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     possui_deficiencia:{
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
     },
-    telefone_contato:{
+    telefone:{
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
 
     },
-    tipo_deficiencia:{
+    deficiencia:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    profissao:{
         type: DataTypes.STRING,
         allowNull: false
     },
-    condicoes_pre_existentes:{
+    situacao_empregaticia:{
         type: DataTypes.STRING,
         allowNull: false
     },
-
+    situacao_empregaticia_outro:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    observacoes:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     id_endereco:{
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references:{
             model: 'endereco',
-            key: 'id_endereco'
+            key: 'id'
         },
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE'
@@ -60,16 +96,17 @@ const Pessoa = sequelize.define('pessoa',{
 
     id_responsavel:{
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references:{
             model: 'responsavel',
-            key: 'id_responsavel'
+            key: 'id'
         },
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE'
     }
 }, {
     tableName: 'pessoa',
+    schema: 'pacientes',
     timestamps: false,
     indexes:[
         {
@@ -78,7 +115,7 @@ const Pessoa = sequelize.define('pessoa',{
         },
         {
             name: 'fk_pessoa_responsavel_idx',
-            fields: ['id_endereco']
+            fields: ['id_responsavel']
         }
     ]
 });

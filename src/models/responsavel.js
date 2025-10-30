@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
 const Responsavel = sequelize.define('responsavel', {
-    id_responsavel: {
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -20,11 +20,10 @@ const Responsavel = sequelize.define('responsavel', {
         
     },
 
-    telefone:{
+    telefone_responsavel:{
         type: DataTypes.STRING,
         allowNull: false,
-        
-        
+    
     },
     parentesco:{
         type: DataTypes.ENUM('pai', 'mae', 'irmao', 'irma', 'avo', 'tio', 'tia', 'outro' ),
@@ -38,6 +37,7 @@ const Responsavel = sequelize.define('responsavel', {
     }
 }, {
     tableName: 'responsavel',
+    schema: 'pacientes',
     timestamps: true,
     engine: 'InnoDB'
 

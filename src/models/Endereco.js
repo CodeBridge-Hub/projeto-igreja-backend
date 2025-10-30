@@ -5,7 +5,7 @@ export default (sequelize) => {
     //Model Endereço
     const Endereco = sequelize.define('Endereco', {
         // ---COLUNAS---
-        id_endereco: {
+        id: {
             type: DataTypes.INTEGER, // Tipo de dado para números inteiros
             primaryKey: true, // Define esta coluna como a Chave Primária (PK)
             autoIncrement: true, // Define a coluna para ser incrementada automaticamente
@@ -41,6 +41,7 @@ export default (sequelize) => {
     }, {
         // ---OPÇÕES DO MODEL---
         tableName: 'endereco', // Garante que o Sequelize crie a tabela exatamente como 'Endereco' no seu banco.
+        schema: 'pacientes',
         timestamps: false,
         engine: 'InnoDB'
 
