@@ -1,88 +1,45 @@
-import { validationResult } from 'express-validator'; // Importa a função de erro
-import pacienteService from '../services/pacienteService.js';
+import * as pacienteService from "../services/pacienteService.js";
+import { sequelize } from "../../config/database.js";
+import * as enderecoService from "../services/enderecoService.js";
+import * as responsavelService from "../services/responsavelService.js";
 
 // Função principal de CRIAÇÃO (TELA 1 - Dados Pessoais)
-const criarCadastro = async (req, res) => {
-    //Verificar erros de validação
-    const erros = validationResult(req);
-    if (!erros.isEmpty()) {
-        // Se houver erros, retorna 400 (Bad Request) com os detalhes
-        return res.status(400).json({ erros: erros.array() });
-    }
 
-    // Se a requisição passou na validação, continua com a lógica do Service
-    const dadosCadastro = req.body;
+export async function findAll(req, res) {
+  try {
+    const pacientes = await pacienteService.findAll();
+    return res.status(200).json(pacientes);
+  } catch (error) {
+    console.error("Erro ao buscar pacientes:", error);
+    return res.status(500).json({ erro: "Falha ao buscar pacientes." });
+  }
+}
 
-    try {
-        const novoPaciente = await pacienteService.processarESalvarCadastro(dadosCadastro)
+export async function create(req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const { paciente, endereco, responsavel } = req.body;
 
-        return res.status(201).json({
-            mensagem: "Cadastro reslizado com sucesso!",
-            paciente: novoPaciente
-        });
-    } catch (error) {
-        console.error('Erro ao processar cadastro:', error);
-        return res.status(500).json({
-            erro: 'Falha no servidor ao criar o cadastro.',
-            detalhes: error.message
-        });
-    }
-};
-
-//Função para ATUALIZAR ENDEREÇO (TELA 2 - Endereço)
-const atualizarEndereco = async (req, res) => {
-    const { id } = req.params; // Captura o ID da URL
+    const enderecoReq = await enderecoService.createEndereco(endereco, { transaction: transaction });
+    const responsavelReq = await responsavelService.createResponsavel(responsavel, { transaction: transaction });
     
-    // 1. Verificar erros de validação ESTRITA de endereço
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ erros: errors.array() });
-    }
+    console.log("Endereco criado:", enderecoReq);
+    console.log("Responsavel criado:", responsavelReq); 
 
-    // 2. Lógica para atualizar no Service (Será PATCH no BD)
-    try {
-        // Você criará a função pacienteService.atualizarEndereco(id, req.body)
-        // Por agora, apenas simule o sucesso
-        console.log(`SIMULAÇÃO: Atualizando endereço para ID: ${id}`);
-        
-        return res.status(200).json({ 
-            mensagem: 'Endereço atualizado com sucesso.',
-            paciente_id: id 
-        });
+    const pacienteReq = await pacienteService.createPaciente(
+      {
+        ...paciente,
+        id_endereco: enderecoReq.id,
+        id_responsavel: responsavelReq.id
+      },
+      { transaction: transaction }
+    );
 
-    } catch (error) {
-        return res.status(500).json({ erro: 'Falha ao atualizar endereço.' });
-    }
-};
-
-//Função para ATUALIZAR OCUPAÇÃO (TELA 3 - Dados de Ocupação)
-const atualizarOcupacao = async (req, res) => {
-    const { id } = req.params; 
-
-    // 1. Verificar erros de validação ESTRITA de ocupação
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ erros: errors.array() });
-    }
-
-    // 2. Lógica para atualizar no Service
-    try {
-        // Você criará a função pacienteService.atualizarOcupacao(id, req.body)
-        // Por agora, apenas simule o sucesso
-        console.log(`SIMULAÇÃO: Atualizando ocupação para ID: ${id}`);
-
-        return res.status(200).json({ 
-            mensagem: 'Dados de Ocupação atualizados com sucesso.',
-            paciente_id: id 
-        });
-
-    } catch (error) {
-        return res.status(500).json({ erro: 'Falha ao atualizar ocupação.' });
-    }
-};
-
-export {
-    criarCadastro,
-    atualizarEndereco,
-    atualizarOcupacao
-};
+    await transaction.commit();
+    return res.status(201).json(pacienteReq);
+  } catch (error) {
+    await transaction.rollback();
+    console.error("Erro ao criar paciente:", error);
+    return res.status(500).json({ erro: "Falha ao criar paciente." });
+  }
+}
