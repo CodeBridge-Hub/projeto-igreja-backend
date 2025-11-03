@@ -3,6 +3,9 @@ import { Sequelize } from "sequelize";
 import PessoaModel from "../src/models/Pessoa.js";
 import EnderecoModel from "../src/models/Endereco.js";
 import ResponsavelModel from "../src/models/Responsavel.js";
+import VoluntarioModel from "../src/models/Voluntario.js";
+import DisponibilidadeModel from "../src/models/Disponibilidade.js";
+import AreaAtuacaoModel from "../src/models/AreaAtuacao.js";
 import UsuarioModel from "../src/models/Usuario.js";
 
 dotenv.config();
@@ -21,6 +24,9 @@ export const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
 export const Endereco = EnderecoModel(sequelize);
 export const Responsavel = ResponsavelModel(sequelize);
 export const Pessoa = PessoaModel(sequelize);
+export const Voluntario = VoluntarioModel(sequelize);
+export const Disponibilidade = DisponibilidadeModel(sequelize);
+export const AreaAtuacao = AreaAtuacaoModel(sequelize);
 export const Usuario = UsuarioModel(sequelize);
 
 export const connectToDatabase = async () => {
