@@ -20,26 +20,35 @@ export async function create(req, res) {
   try {
     const { paciente, endereco, responsavel } = req.body;
 
-    const enderecoReq = await enderecoService.createEndereco(endereco, { transaction: transaction });
-    const responsavelReq = await responsavelService.createResponsavel(responsavel, { transaction: transaction });
-    
-    console.log("Endereco criado:", enderecoReq);
-    console.log("Responsavel criado:", responsavelReq); 
+    // Cria o endereço sempre
+    const enderecoReq = await enderecoService.createEndereco(endereco, { transaction });
 
+    // Só cria o responsável se paciente.possui_responsavel for true
+    let responsavelReq = null;
+    if (paciente.possui_responsavel) {
+      responsavelReq = await responsavelService.createResponsavel(responsavel, { transaction });
+      console.log("Responsavel criado:", responsavelReq);
+    }
+
+    console.log("Endereco criado:", enderecoReq);
+
+    // Cria o paciente com ou sem responsável
     const pacienteReq = await pacienteService.createPaciente(
       {
         ...paciente,
         id_endereco: enderecoReq.id,
-        id_responsavel: responsavelReq.id
+        id_responsavel: responsavelReq ? responsavelReq.id : null
       },
-      { transaction: transaction }
+      { transaction }
     );
 
     await transaction.commit();
     return res.status(201).json(pacienteReq);
+
   } catch (error) {
     await transaction.rollback();
     console.error("Erro ao criar paciente:", error);
     return res.status(500).json({ erro: "Falha ao criar paciente." });
   }
 }
+
