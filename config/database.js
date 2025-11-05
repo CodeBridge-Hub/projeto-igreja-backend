@@ -6,7 +6,7 @@ import ResponsavelModel from "../src/models/Responsavel.js";
 import VoluntarioModel from "../src/models/Voluntario.js";
 import DisponibilidadeModel from "../src/models/Disponibilidade.js";
 import AreaAtuacaoModel from "../src/models/AreaAtuacao.js";
-import UsuarioModel from "../src/models/Usuario.js";
+import UsuarioModel from "../src/models/usuario.js";
 
 dotenv.config();
 
