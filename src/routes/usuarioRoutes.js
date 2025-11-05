@@ -13,4 +13,16 @@ router.post('/user',
     usuarioController.findByEmail
 )
 
-export default router;
+router.post('/', 
+    usuarioController.create
+);
+
+router.put('/:id', 
+    usuarioController.update
+);
+
+router.delete('/:id', 
+    usuarioController.remove
+);
+
+export default router;  
