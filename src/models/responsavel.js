@@ -37,7 +37,6 @@ const Responsavel = sequelize.define('responsavel', {
     }
 }, {
     tableName: 'responsavel',
-    schema: 'pacientes',
     timestamps: true,
     engine: 'InnoDB'
 

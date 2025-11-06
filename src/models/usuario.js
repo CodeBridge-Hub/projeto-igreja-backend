@@ -1,40 +1,62 @@
 import { DataTypes } from 'sequelize';
+import { SCHEMA } from 'sqlite3';
 
 export default (sequelize) => {
-const Usuario = sequelize.define('Usuario', {
-  id_usuario: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  nome_usuario: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    unique: true 
-  },
-  email: {
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  senha: {
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  setor: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  permissao_acesso: {
-    type: DataTypes.STRING(100),
-    allowNull: true
-  }
-}, {
-  tableName: 'usuario',
-  timestamps: false,
-  engine: 'InnoDB'   
-});
+  const Usuario = sequelize.define(
+    'Usuario',
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
+      nome: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        validate: {
+          notEmpty: true
+        }
+      },
+      email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
+      senha: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: {
+          notEmpty: true
+        }
+      },
+      cpf: {
+        type: DataTypes.STRING(11),
+        allowNull: false,
+        unique: true,
+        validate: {
+          isNumeric: true,
+          len: [11, 11]
+        }
+      },
+      setor: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      role: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+      }
+    },
+    {
+      tableName: 'usuario',
+      schema: 'administrativo',
+      timestamps: false,
+    }
+  );
 
-return Usuario;
-
-}
+  return Usuario;
+};

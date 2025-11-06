@@ -14,7 +14,7 @@ import { setupSocket } from "./sockets/socket.js"; // import do módulo de socke
 const app = express();
 const server = http.createServer(app); 
 
-setupSocket(server); // 👈 só isso
+setupSocket(server); 
 
 app.use(cors({
   origin: ['http://localhost:5173', 'https://portaligreja.siaeserver.com', 'http://localhost:5174'],
