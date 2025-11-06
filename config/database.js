@@ -1,9 +1,12 @@
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
-import PessoaModel from "../src/models/Pessoa.js";
+import PessoaModel from "../src/models/pessoa.js";
 import EnderecoModel from "../src/models/Endereco.js";
 import ResponsavelModel from "../src/models/Responsavel.js";
 import UsuarioModel from "../src/models/Usuario.js";
+import AtendimentoModel from "../src/models/Atendimento.js";
+import ServicoModel from "../src/models/servico.js";
+import PacienteAtendimentoModel from "../src/models/paciente_atendimento.js";
 
 dotenv.config();
 
@@ -22,6 +25,9 @@ export const Endereco = EnderecoModel(sequelize);
 export const Responsavel = ResponsavelModel(sequelize);
 export const Pessoa = PessoaModel(sequelize);
 export const Usuario = UsuarioModel(sequelize);
+export const Atendimento = AtendimentoModel(sequelize);
+export const Servico = ServicoModel(sequelize); 
+export const PacienteAtendimento = PacienteAtendimentoModel(sequelize);
 
 export const connectToDatabase = async () => {
   try {
