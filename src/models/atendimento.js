@@ -1,55 +1,66 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-const Atendimento = sequelize.define('Atendimento', {
-  id_atendimento: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  id_pessoa: {
-    type: DataTypes.INTEGER, 
-    allowNull: false,
-    // references: {
-    //   model: 'paciente', // nome da tabela referenciada
-    //   key: 'id_pessoa'
-    // },
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
-  },
-  tipo_servico: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  cod_senha: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  status_atendimento: {
-    type: DataTypes.STRING(100),
-    allowNull: true
-  }
-}, {
-  tableName: 'Atendimento',  // nome exato da tabela
-  timestamps: false,         // não cria createdAt e updatedAt
-  indexes: [
+  const Atendimento = sequelize.define(
+    "atendimento",
     {
-      name: 'fk_atendimento_pessoa_idx',
-      fields: ['id_pessoa']
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      id_paciente: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "pessoa",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      id_servico: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "servico",
+            schema: "servicos",
+          },
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
+      cod: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      status: {
+        type: DataTypes.ENUM("aguardando", "chamado", "em_atendimento", "finalizado"),
+        defaultValue: "aguardando",
+        allowNull: false,
+      },
+    },
+    {
+      tableName: "atendimento",
+      schema: "pacientes",
+      timestamps: true, // ativa createdAt e updatedAt automaticamente
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+      indexes: [
+        {
+          name: "fk_atendimento_pessoa_idx",
+          fields: ["id_paciente"],
+        },
+        {
+          name: "fk_atendimento_servico_idx",
+          fields: ["id_servico"],
+        },
+      ],
     }
-  ]
-});
+  );
 
-return  Atendimento;
-
+  return Atendimento;
 };
-
-//const Paciente = require('./Paciente'); // do modelo Paciente
-
-// Atendimento.belongsTo(Paciente, {
-//   foreignKey: 'id_pessoa',
-//   as: 'paciente',
-//   onDelete: 'CASCADE',
-//   onUpdate: 'CASCADE'
-// });

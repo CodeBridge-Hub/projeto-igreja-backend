@@ -1,8 +1,11 @@
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
-import PessoaModel from "../src/models/Pessoa.js";
+import PessoaModel from "../src/models/pessoa.js";
 import EnderecoModel from "../src/models/Endereco.js";
 import ResponsavelModel from "../src/models/Responsavel.js";
+import AtendimentoModel from "../src/models/Atendimento.js";
+import ServicoModel from "../src/models/servico.js";
+import PacienteAtendimentoModel from "../src/models/paciente_atendimento.js";
 import VoluntarioModel from "../src/models/Voluntario.js";
 import DisponibilidadeModel from "../src/models/Disponibilidade.js";
 import AreaAtuacaoModel from "../src/models/AreaAtuacao.js";
@@ -28,6 +31,9 @@ export const Voluntario = VoluntarioModel(sequelize);
 export const Disponibilidade = DisponibilidadeModel(sequelize);
 export const AreaAtuacao = AreaAtuacaoModel(sequelize);
 export const Usuario = UsuarioModel(sequelize);
+export const Atendimento = AtendimentoModel(sequelize);
+export const Servico = ServicoModel(sequelize); 
+export const PacienteAtendimento = PacienteAtendimentoModel(sequelize);
 
 export const connectToDatabase = async () => {
   try {
