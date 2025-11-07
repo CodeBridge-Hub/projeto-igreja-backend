@@ -12,7 +12,6 @@ export default (sequelize) => {
     dia_da_semana: {
       type: DataTypes.ENUM(...DIAS_SEMANA),
       allowNull: false,
-      unique: true // apenas um registro por dia na tabela de dias
     }
   }, {
     tableName: 'disponibilidades',

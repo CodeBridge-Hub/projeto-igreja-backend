@@ -27,3 +27,7 @@ export function emitirAtualizacaoFila(dados) {
   io.emit("fila-atualizada", { dados });
 }
 
+export function emitirAtualizacaoFilaExibicao(dados) {
+  io.emit("fila-exibicao-atualizada", [...dados]);
+}
+

@@ -35,6 +35,9 @@ export const Atendimento = AtendimentoModel(sequelize);
 export const Servico = ServicoModel(sequelize); 
 export const PacienteAtendimento = PacienteAtendimentoModel(sequelize);
 
+Atendimento.belongsTo(Pessoa, { foreignKey: "id_paciente", as: "paciente" });
+Atendimento.belongsTo(Servico, { foreignKey: "id_servico", as: "servico" });
+
 export const connectToDatabase = async () => {
   try {
     console.log("1. Conectando ao banco de dados...");

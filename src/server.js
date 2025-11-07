@@ -10,6 +10,9 @@ import atendimentoRoutes from './routes/atendimentoRoutes.js';
 import { seedUsuarios } from "./seeders/seedUsuarios.js";
 
 import { setupSocket } from "./sockets/socket.js"; // import do módulo de socket
+import { iniciarMonitorFila } from './filaExibicao.js';
+
+iniciarMonitorFila(); // Inicia o monitoramento da fila de exibição
 
 const app = express();
 const server = http.createServer(app); 

@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { SCHEMA } from 'sqlite3';
+
 
 export default (sequelize) => {
   const Usuario = sequelize.define(
