@@ -9,6 +9,9 @@ router.get('/',
     pacienteController.findAll
 )   
 
+router.get('/:id',
+    pacienteController.findById
+)   
 router.post('/create',
     pacienteController.create
 )   

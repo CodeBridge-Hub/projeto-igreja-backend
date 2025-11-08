@@ -7,6 +7,8 @@ import { connectToDatabase } from '../config/database.js';
 import pacientesRoutes from './routes/pacientesRoutes.js';
 import usuariosRoutes from './routes/usuarioRoutes.js';
 import atendimentoRoutes from './routes/atendimentoRoutes.js';
+import servicosRoutes from './routes/servicosRoutes.js';
+import setorServicoRoutes from './routes/setorServicoRoutes.js'
 import { seedUsuarios } from "./seeders/seedUsuarios.js";
 
 import { setupSocket } from "./sockets/socket.js"; // import do módulo de socket
@@ -28,7 +30,8 @@ app.use(express.json());
 app.use('/api/pacientes', pacientesRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/atendimentos', atendimentoRoutes);
-
+app.use('/api/servicos', servicosRoutes)
+app.use('/api/setores', setorServicoRoutes)
 const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {

@@ -3,13 +3,15 @@ import { Sequelize } from "sequelize";
 import PessoaModel from "../src/models/pessoa.js";
 import EnderecoModel from "../src/models/Endereco.js";
 import ResponsavelModel from "../src/models/Responsavel.js";
-import AtendimentoModel from "../src/models/Atendimento.js";
+import AtendimentoModel from "../src/models/atendimento.js";
 import ServicoModel from "../src/models/servico.js";
 import PacienteAtendimentoModel from "../src/models/paciente_atendimento.js";
 import VoluntarioModel from "../src/models/Voluntario.js";
 import DisponibilidadeModel from "../src/models/Disponibilidade.js";
 import AreaAtuacaoModel from "../src/models/AreaAtuacao.js";
 import UsuarioModel from "../src/models/usuario.js";
+import SetorModel from "../src/models/setor.js"
+import SetorServicoModel from "../src/models/setor_servico.js"
 
 dotenv.config();
 
@@ -34,9 +36,55 @@ export const Usuario = UsuarioModel(sequelize);
 export const Atendimento = AtendimentoModel(sequelize);
 export const Servico = ServicoModel(sequelize); 
 export const PacienteAtendimento = PacienteAtendimentoModel(sequelize);
+export const Setor = SetorModel(sequelize)
+export const SetorServico = SetorServicoModel(sequelize)
 
 Atendimento.belongsTo(Pessoa, { foreignKey: "id_paciente", as: "paciente" });
 Atendimento.belongsTo(Servico, { foreignKey: "id_servico", as: "servico" });
+
+Atendimento.belongsTo(Setor, {
+  foreignKey: "id_setor",
+  as: "setor",
+});
+
+// Um setor pode ter vários atendimentos
+Setor.hasMany(Atendimento, {
+  foreignKey: "id_setor",
+  as: "atendimentos",
+});
+
+Setor.belongsToMany(Servico, {
+  through: SetorServico,
+  foreignKey: "id_setor",
+  otherKey: "id_servico",
+  as: "servicos",
+});
+
+Servico.belongsToMany(Setor, {
+  through: SetorServico,
+  foreignKey: "id_servico",
+  otherKey: "id_setor",
+  as: "setores",
+});
+
+Pessoa.belongsToMany(Atendimento, {
+  through: PacienteAtendimento,
+  foreignKey: "paciente_id",
+  otherKey: "atendimento_id",
+  as: "atendimentos",
+});
+
+Atendimento.belongsToMany(Pessoa, {
+  through: PacienteAtendimento,
+  foreignKey: "atendimento_id",
+  otherKey: "paciente_id",
+  as: "pacientes",
+});
+
+SetorServico.belongsTo(Setor, { foreignKey: "id_setor", as: "setor" });
+
+// Permite que o SetorServico faça include do Servico (opcional)
+SetorServico.belongsTo(Servico, { foreignKey: "id_servico", as: "servico" });
 
 export const connectToDatabase = async () => {
   try {

@@ -35,5 +35,8 @@ router.put("/finish-appointment/:id",
     atendimentoController.finishAppointmentById
 );
 
+router.post("/create",
+    atendimentoController.createMultiple
+);
 
 export default router;

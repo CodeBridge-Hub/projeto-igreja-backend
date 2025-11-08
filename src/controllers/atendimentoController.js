@@ -1,9 +1,11 @@
 import { sequelize } from "../../config/database.js";
 import * as atendimentoService from "../services/atendimentoService.js";
+import * as setorServicoService from "../services/setorServicoService.js";
 import { emitirAtualizacaoFila } from "../sockets/socket.js";
 import { emitirSenhaChamada } from "../sockets/socket.js";
 import { emitirAtualizacaoFilaExibicao } from "../sockets/socket.js";
 import { filaExibicao, removerExpirados, removerEmAtendimento } from "../filaExibicao.js";
+import { Atendimento, PacienteAtendimento } from "../../config/database.js";
 
 export async function getAvailableAppointments(req, res) {
   try {
@@ -137,6 +139,7 @@ export async function callNextAppointment(req, res) {
       cod: next.cod,
       servico: next.id_servico,
       paciente: next.id_paciente,
+      atendimento: next,
       timestamp: Date.now(),
     });
 
@@ -153,6 +156,8 @@ export async function callNextAppointment(req, res) {
       cod: next.cod,
       servico: next.id_servico,
       paciente: next.id_paciente,
+      atendimento: next,
+
       status: next.status,
     });
 
@@ -173,7 +178,7 @@ export async function finishAppointmentById(req, res) {
     await transaction.commit();
     const filaAtualizada = await atendimentoService.getAvailableAppointments();
     emitirAtualizacaoFila(filaAtualizada);
-    
+
     return res.status(200).json(atendimentoFinalizado);
   } catch (error) {
     await transaction.rollback();
@@ -189,4 +194,49 @@ export async function finishAppointmentById(req, res) {
     console.error("Erro ao finalizar atendimento:", error);
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
+}
+
+export async function createMultiple(req, res) {
+  const items = req.body.items; // lista de itens do front-end
+
+  const resultados = [];
+
+  const transaction = await sequelize.transaction();
+
+  try {
+    for (const item of items) {
+      // 1. Buscar setores disponíveis para o serviço
+      const setoresServico = await setorServicoService.findByIdService(item.id_servico);
+
+      // 2. Escolher um setor aleatório
+      const id_setor = pickRandomSetor(setoresServico);
+      console.log(id_setor);
+      // 3. Criar atendimento com a transação
+      console.log(item);
+      const atendimento = await Atendimento.create({ ...item, id_setor }, { transaction });
+
+      if (item.id_paciente) {
+        await atendimento.addPaciente(item.id_paciente, { transaction });
+      }
+      resultados.push(atendimento);
+    }
+
+    // 4. Commit da transação
+    await transaction.commit();
+    const filaAtualizada = atendimentoService.getAvailableAppointments();
+    emitirAtualizacaoFila(filaAtualizada);
+
+    res.json({ success: true, atendimentos: resultados });
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+function pickRandomSetor(setores) {
+  console.log(setores);
+  if (!setores || setores.length === 0) return null;
+  const index = Math.floor(Math.random() * setores.length);
+  return setores[index].setor.id; // pega o id do Setor incluído
 }

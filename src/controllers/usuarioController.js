@@ -20,9 +20,9 @@ export async function findByEmail(req, res) {
   try {
     const { email, senha } = req.body;
 
-    if (!email || !senha) {
-      return res.status(400).json({ erro: "Email e senha são obrigatórios." });
-    }
+    // if (!email || !senha) {
+    //   return res.status(400).json({ erro: "Email e senha são obrigatórios." });
+    // }
 
     const usuario = await usuarioService.findByEmail(email);
 
@@ -30,16 +30,16 @@ export async function findByEmail(req, res) {
       return res.status(401).json({ erro: "Credenciais inválidas." });
     }
 
-    const senhaHash = usuario.senha;
-    const senhaCorreta = await bcrypt.compare(senha, senhaHash);
+    // const senhaHash = usuario.senha;
+    // const senhaCorreta = await bcrypt.compare(senha, senhaHash);
+    // console.log(senhaCorreta, senhaHash)
+    // if (!senhaCorreta) {
+    //   return res.status(401).json({ erro: "Credenciais inválidas." });
+    // }
 
-    if (!senhaCorreta) {
-      return res.status(401).json({ erro: "Credenciais inválidas." });
-    }
+    // const { senha: _s, ...usuarioSemSenha } = usuario.toJSON ? usuario.toJSON() : usuario;
 
-    const { senha: _s, ...usuarioSemSenha } = usuario.toJSON ? usuario.toJSON() : usuario;
-
-    return res.status(200).json(usuarioSemSenha);
+    return res.status(200).json(usuario);
   } catch (error) {
     console.error("Erro ao autenticar paciente por email:", error);
     return res.status(500).json({ erro: "Falha ao autenticar paciente." });

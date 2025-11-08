@@ -83,6 +83,10 @@ const Pessoa = sequelize.define('pessoa',{
         type: DataTypes.STRING,
         allowNull: true
     },
+    cod:{
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     id_endereco:{
         type: DataTypes.INTEGER,
         allowNull: true,

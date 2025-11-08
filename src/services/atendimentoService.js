@@ -1,21 +1,34 @@
-import { Atendimento, Pessoa } from "../../config/database.js";
+import { Atendimento, Pessoa, Setor, Servico } from "../../config/database.js";
 
 export async function getAvailableAppointments() {
   const atendimentos = await Atendimento.findAll({
-    include: [{ model: Pessoa, as: "paciente" }]
-    });
+    include: [{ model: Pessoa, as: "paciente" },
+      {model: Setor, as: "setor"}
+    ]
+  });
 
-
+  // Pacientes que já estão em atendimento ou chamados
   const pacientesEmAtendimento = new Set(
-    atendimentos.filter((a) => 
-      ["em_atendimento", "chamado"].includes(a.status)).map((a) => a.id_paciente));
+    atendimentos
+      .filter(a => ["em_atendimento", "chamado"].includes(a.status))
+      .map(a => a.id_paciente)
+  );
 
-  const servicosOcupados = new Set(atendimentos.filter((atendimento) => atendimento.status === "em_atendimento" || atendimento.status === "chamado").map((atendimento) => atendimento.id_servico));
+  // Setores que já estão em uso
+  const setoresOcupados = new Set(
+    atendimentos
+      .filter(a => ["em_atendimento", "chamado"].includes(a.status))
+      .map(a => a.id_setor)
+  );
 
-  const atendimentosAguardando = 
-  atendimentos.filter((atendimento) => atendimento.status === "aguardando" && 
-  !pacientesEmAtendimento.has(atendimento.id_paciente) && 
-  !servicosOcupados.has(atendimento.id_servico)).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  // Atendimentos aguardando, sem paciente ou setor bloqueado
+  const atendimentosAguardando = atendimentos
+    .filter(a =>
+      a.status === "aguardando" &&
+      !pacientesEmAtendimento.has(a.id_paciente) &&
+      !setoresOcupados.has(a.id_setor)
+    )
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
   return atendimentosAguardando;
 }
@@ -25,19 +38,40 @@ export function getNextAvailableAppointment() {
 }
 
 export async function getNextAvailableAppointmentByService(id_servico) {
+  console.log(id_servico)
   const atendimentos = await Atendimento.findAll({
-    include: [{ model: Pessoa, as: "paciente" }]
-    });
+    include: [{ model: Pessoa, as: "paciente" },
+      {model: Servico, as: "servico"}
+    ]
+  });
 
-  const pacientesEmAtendimento = new Set(atendimentos.filter((a) => a.status === "em_atendimento" || a.status === "chamado").map((a) => a.id_paciente));
+  // Pacientes que já estão em atendimento ou chamados
+  const pacientesEmAtendimento = new Set(
+    atendimentos
+      .filter(a => ["em_atendimento", "chamado"].includes(a.status))
+      .map(a => a.id_paciente)
+  );
 
-  const servicoOcupado = atendimentos.some((atendimento) => (atendimento.status === "em_atendimento" || atendimento.status === "chamado") && atendimento.id_servico === parseInt(id_servico));
-  if (servicoOcupado) return null;
+  // Setores que já estão em uso
+  const setoresOcupados = new Set(
+    atendimentos
+      .filter(a => ["em_atendimento", "chamado"].includes(a.status))
+      .map(a => a.id_setor)
+  );
 
-  const atendimentosAguardando = atendimentos.filter((atendimento) => atendimento.status === "aguardando" && atendimento.id_servico === parseInt(id_servico) && !pacientesEmAtendimento.has(atendimento.id_paciente)).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  // Atendimentos aguardando do serviço informado
+  const atendimentosAguardando = atendimentos
+    .filter(a =>
+      a.status === "aguardando" &&
+      a.id_setor === parseInt(id_servico) &&
+      !pacientesEmAtendimento.has(a.id_paciente) &&
+      !setoresOcupados.has(a.id_setor)
+    )
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
   return atendimentosAguardando[0] || null;
 }
+
 
 export async function getCountCalledAppointments() {
   return Atendimento.count({
@@ -47,8 +81,10 @@ export async function getCountCalledAppointments() {
 
 export async function getCalledAppointmentByService(id_servico) {
   const atendimento = await Atendimento.findOne({
-    where: { id_servico: parseInt(id_servico), status: "chamado" },
-    include: [{ model: Pessoa, as: "paciente" }],
+    where: { id_setor: parseInt(id_servico), status: "chamado" },
+    include: [{ model: Pessoa, as: "paciente" },
+      {model: Setor, as: "setor"}
+    ],
   });
 
   return atendimento || null;
@@ -56,7 +92,7 @@ export async function getCalledAppointmentByService(id_servico) {
 
 export async function getProgressAppointmentByService(id_servico) {
   const atendimento = await Atendimento.findOne({
-    where: { id_servico: parseInt(id_servico), status: "em_atendimento" },
+    where: { id_setor: parseInt(id_servico), status: "em_atendimento" },
     include: [{ model: Pessoa, as: "paciente" }],
   });
   console.log(atendimento);
@@ -116,4 +152,9 @@ export async function finishAppointment(atendimentoId, transaction = null) {
 
   await atendimento.update({ status: "finalizado" }, { transaction });
   return atendimento;
+}
+
+
+export async function create(dados) {
+  return Atendimento.create()
 }

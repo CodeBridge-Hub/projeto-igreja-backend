@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  const Servico = sequelize.define(
-    "servico",
+  const Setor = sequelize.define(
+    "setor",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -14,17 +14,13 @@ export default (sequelize) => {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
-      cod: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-      },
     },
     {
-      tableName: "servico",
+      tableName: "setor",
       schema: "servicos",
       timestamps: false,
     }
   );
 
-  return Servico;
+  return Setor;
 };

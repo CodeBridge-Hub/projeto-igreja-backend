@@ -33,6 +33,19 @@ export default (sequelize) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       },
+      id_setor: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: {
+            tableName: "setor",
+            schema: "servicos",
+          },
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+      },
       cod: {
         type: DataTypes.STRING,
         allowNull: true,
