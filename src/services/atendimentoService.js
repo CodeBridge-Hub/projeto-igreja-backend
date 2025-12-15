@@ -3,7 +3,8 @@ import { Atendimento, Pessoa, Setor, Servico } from "../../config/database.js";
 export async function getAvailableAppointments() {
   const atendimentos = await Atendimento.findAll({
     include: [{ model: Pessoa, as: "paciente" },
-      {model: Setor, as: "setor"}
+      {model: Setor, as: "setor"},
+      {model: Servico, as: "servico"}
     ]
   });
 

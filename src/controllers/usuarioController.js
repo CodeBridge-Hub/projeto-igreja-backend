@@ -19,25 +19,28 @@ export async function findAll(req, res) {
 export async function findByEmail(req, res) {
   try {
     const { email, senha } = req.body;
-
-    // if (!email || !senha) {
-    //   return res.status(400).json({ erro: "Email e senha são obrigatórios." });
-    // }
+    console.log(req.body)
+    
+    if (!email || !senha) {
+      return res.status(400).json({ erro: "Email e senha são obrigatórios." });
+    }
 
     const usuario = await usuarioService.findByEmail(email);
+    console.log("USUÁRIO: ", usuario)
 
     if (!usuario) {
       return res.status(401).json({ erro: "Credenciais inválidas." });
     }
 
-    // const senhaHash = usuario.senha;
-    // const senhaCorreta = await bcrypt.compare(senha, senhaHash);
-    // console.log(senhaCorreta, senhaHash)
-    // if (!senhaCorreta) {
-    //   return res.status(401).json({ erro: "Credenciais inválidas." });
-    // }
+    const senhaHash = usuario.senha;
+    const senhaCorreta = await bcrypt.compare(senha, senhaHash);
 
-    // const { senha: _s, ...usuarioSemSenha } = usuario.toJSON ? usuario.toJSON() : usuario;
+    console.log(senhaCorreta, senhaHash)
+    if (!senhaCorreta) {
+      return res.status(401).json({ erro: "Credenciais inválidas." });
+    }
+
+    const { senha: _s, ...usuarioSemSenha } = usuario.toJSON ? usuario.toJSON() : usuario;
 
     return res.status(200).json(usuario);
   } catch (error) {
